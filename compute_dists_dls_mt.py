@@ -36,7 +36,7 @@ def worker(qq, i, models):
     n_pairs = 0
     for p in range(1, len(imgs)):
         for q in range(p):
-            # LPIPS += models.forward(imgs[q], imgs[p])
+            LPIPS += models.forward(imgs[q], imgs[p])
             n_pairs += 1
     LPIPS /= n_pairs
     qq.put([LPIPS])
