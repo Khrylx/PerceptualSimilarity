@@ -36,8 +36,8 @@ for i in range(opt.ninput):
         for q in range(p):
             LPIPS += model.forward(imgs[q].to(device), imgs[p].to(device))
             n_pairs += 1
+            torch.cuda.empty_cache()
 
-    torch.cuda.empty_cache()
     LPIPS /= n_pairs
     t_LPIPS += LPIPS
     print('%d %.4f' % (i, LPIPS.item()))
