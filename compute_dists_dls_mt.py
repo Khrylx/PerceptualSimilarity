@@ -2,6 +2,7 @@ import argparse
 import models
 import torch
 import os
+import multiprocessing
 from util import util
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -9,6 +10,7 @@ parser.add_argument('--cfg', type=str, default='dls_06')
 parser.add_argument('--ninput', type=int, default=106)
 parser.add_argument('--nsample', type=int, default=5)
 parser.add_argument('--gpu_index', type=int, default=0)
+parser.add_argument('--num_thread', type=int, default=8)
 
 opt = parser.parse_args()
 
@@ -20,8 +22,8 @@ model = models.PerceptualLoss(model='net-lin',net='alex', use_gpu=opt.gpu_index 
 results_dir = os.path.expanduser('~/results/diverse_gan/bicyclegan/%s/test/images' % opt.cfg)
 print(results_dir)
 
-t_LPIPS = 0.0
-for i in range(opt.ninput):
+
+def worker(qq, i, models):
     imgs = []
     for j in range(opt.nsample):
         img_name = 'input_%03d_random_sample%02d.png' % (i, j + 1)
@@ -34,11 +36,27 @@ for i in range(opt.ninput):
     n_pairs = 0
     for p in range(1, len(imgs)):
         for q in range(p):
-            LPIPS += model.forward(imgs[q].to(device), imgs[p].to(device))
+            # LPIPS += models.forward(imgs[q], imgs[p])
             n_pairs += 1
     LPIPS /= n_pairs
-    t_LPIPS += LPIPS
-    print('%d %.4f' % (i, LPIPS.item()))
+    qq.put([LPIPS])
+
+
+queue = multiprocessing.Queue()
+workers = []
+for i in range(opt.num_thread):
+    workers.append(multiprocessing.Process(target=worker, args=(queue, i, model)))
+for worker in workers:
+    worker.start()
+
+
+queue.get()
+
+#LPIPS = queue.get_nowait()
+#print(LPIPS)
+
+t_LPIPS = 0.0
+
 
 t_LPIPS /= opt.ninput
 print('Total LPIPS %.4f' % t_LPIPS)
