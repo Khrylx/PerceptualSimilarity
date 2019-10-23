@@ -13,6 +13,7 @@ parser.add_argument('--gpu_index', type=int, default=0)
 opt = parser.parse_args()
 
 device = torch.device('cuda', index=opt.gpu_index) if torch.cuda.is_available() else torch.device('cpu')
+torch.set_grad_enabled(False)
 
 ## Initializing the model
 model = models.PerceptualLoss(model='net-lin',net='alex', use_gpu=opt.gpu_index >= 0 and torch.cuda.is_available(), gpu_ids=[opt.gpu_index])
