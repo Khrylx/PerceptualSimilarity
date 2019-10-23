@@ -34,11 +34,11 @@ for i in range(opt.ninput):
     n_pairs = 0
     for p in range(1, len(imgs)):
         for q in range(p):
-            LPIPS += model.forward(imgs[q].to(device), imgs[p].to(device))
+            LPIPS += model.forward(imgs[q].to(device), imgs[p].to(device)).item()
             n_pairs += 1
     LPIPS /= n_pairs
     t_LPIPS += LPIPS
-    print('%d %.4f' % (i, LPIPS.item()))
+    print('%d %.4f' % (i, LPIPS))
 
 t_LPIPS /= opt.ninput
 print('Total LPIPS %.4f' % t_LPIPS)
