@@ -5,9 +5,9 @@ import os
 from util import util
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument('--cfg', type=str, default='dls_06')
+parser.add_argument('--cfg', type=str, default='pretrain')
 parser.add_argument('--ninput', type=int, default=106)
-parser.add_argument('--nsample', type=int, default=5)
+parser.add_argument('--nsample', type=int, default=50)
 parser.add_argument('--gpu_index', type=int, default=0)
 
 opt = parser.parse_args()
