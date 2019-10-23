@@ -8,14 +8,14 @@ parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFo
 parser.add_argument('--cfg', type=str, default='pretrain')
 parser.add_argument('--ninput', type=int, default=106)
 parser.add_argument('--nsample', type=int, default=50)
-parser.add_argument('--gpu_index', type=int, default=-1)
+parser.add_argument('--gpu_index', type=int, default=0)
 
 opt = parser.parse_args()
 
 device = torch.device('cuda', index=opt.gpu_index) if torch.cuda.is_available() else torch.device('cpu')
 
 ## Initializing the model
-model = models.PerceptualLoss(model='net-lin',net='alex', use_gpu=opt.gpu_index >= 0, gpu_ids=[opt.gpu_index])
+model = models.PerceptualLoss(model='net-lin',net='alex', use_gpu=opt.gpu_index >= 0 and torch.cuda.is_available(), gpu_ids=[opt.gpu_index])
 
 results_dir = os.path.expanduser('~/results/diverse_gan/bicyclegan/%s/test/images' % opt.cfg)
 print(results_dir)
